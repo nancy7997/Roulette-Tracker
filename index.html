@@ -1,697 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>American Roulette Tracker | Landscape Table + 3‑Row History</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive American Roulette Tracker</title>
+    <style>
+        :root {
+            --green-felt: #2b7a4b;
+            --board-green: #0b592b;
+            --red-num: #d92525;
+            --black-num: #111111;
+            --border-color: #ffffff;
+            --highlight: #ffd700;
+        }
 
-    body {
-      background: #0a3a22;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: 'Segoe UI', 'Roboto', 'Inter', system-ui, sans-serif;
-      padding: 20px;
-    }
+        body {
+            background-color: var(--green-felt);
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    /* MAIN WRAPPER – LANDSCAPE ORIENTATION */
-    .roulette-app {
-      max-width: 1480px;
-      width: 100%;
-      background: #145a36;
-      border-radius: 52px;
-      padding: 20px 24px 32px 24px;
-      box-shadow: 0 20px 35px rgba(0,0,0,0.5), inset 0 1px 4px rgba(255,250,180,0.2);
-      border: 1px solid #e6c17a;
-    }
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-    /* === 3-ROW HISTORY (TOP) === */
-    .history-area {
-      background: #082a18cc;
-      backdrop-filter: blur(3px);
-      border-radius: 44px;
-      padding: 16px 24px;
-      margin-bottom: 32px;
-      border: 1px solid #f0cf8a;
-    }
-    .history-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-    .history-header h2 {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #fff2c4;
-      letter-spacing: 1px;
-      text-shadow: 1px 1px 0 #4f3a1a;
-    }
-    .clear-all-btn {
-      background: #c69755;
-      border: none;
-      padding: 8px 28px;
-      border-radius: 60px;
-      font-weight: bold;
-      font-size: 1rem;
-      color: #1c2a0e;
-      cursor: pointer;
-      transition: 0.08s linear;
-      box-shadow: 0 3px 0 #745a32;
-      font-family: inherit;
-    }
-    .clear-all-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 #745a32;
-    }
+        /* History Tracker Section */
+        #history-container {
+            width: 100%;
+            max-width: 900px;
+            height: 120px; /* Space for ~3 rows */
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 8px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
 
-    .history-rows {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .history-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      min-height: 70px;
-      background: #07201355;
-      border-radius: 60px;
-      padding: 8px 16px;
-    }
-    .history-chip {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.45rem;
-      font-family: 'Courier New', monospace;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.5);
-      color: white;
-      text-shadow: 0 1px 2px black;
-      border: 1px solid #ffdf9c;
-    }
-    .empty-row-msg {
-      color: #cbbd88;
-      font-style: italic;
-      font-size: 0.9rem;
-      padding: 8px;
-    }
+        .history-ball {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid white;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
 
-    /* === LANDSCAPE ROULETTE TABLE – WIDE HORIZONTAL === */
-    .roulette-table {
-      background: #175f3a;
-      background-image: radial-gradient(circle at 15% 30%, rgba(0,0,0,0.12) 2%, transparent 2.5%);
-      background-size: 28px 28px;
-      border-radius: 48px;
-      padding: 22px 20px 28px 20px;
-      margin-bottom: 32px;
-      border: 2px solid #eac27d;
-      box-shadow: inset 0 0 0 1px #fbe2aa, 0 12px 22px rgba(0,0,0,0.3);
-      width: 100%;
-      overflow-x: auto;
-    }
+        .controls {
+            margin-bottom: 20px;
+        }
 
-    /* LANDSCAPE FLEX STRUCTURE – horizontal flow */
-    .landscape-grid {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      gap: 20px;
-      align-items: flex-start;
-      min-width: 880px;
-    }
+        button {
+            background-color: #333;
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
 
-    /* Zeros column on the far left (0 and 00 stacked) */
-    .zeros-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      width: 105px;
-    }
-    .zero-item, .doublezero-item {
-      background: #2b5339;
-      border: 2px solid #efcb8a;
-      border-radius: 38px;
-      text-align: center;
-      font-size: 1.9rem;
-      font-weight: 800;
-      font-family: monospace;
-      padding: 18px 0;
-      width: 100%;
-      color: #fff6dd;
-      cursor: pointer;
-      transition: 0.08s;
-      box-shadow: 0 4px 0 #5b411f;
-    }
+        button:hover {
+            background-color: #555;
+            border-color: var(--highlight);
+            color: var(--highlight);
+        }
 
-    /* Three number columns (1-36) */
-    .numbers-threecols {
-      display: flex;
-      gap: 16px;
-      flex: 4;
-    }
-    .num-col-land {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-    }
-    .number-cell-land {
-      background: #272011;
-      border-radius: 28px;
-      text-align: center;
-      padding: 14px 0;
-      font-size: 1.3rem;
-      font-weight: bold;
-      font-family: monospace;
-      border: 1px solid #eac27d;
-      cursor: pointer;
-      transition: 0.05s linear;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-      color: #ffeecd;
-    }
-    .red-num {
-      background: #b03232;
-      background: linear-gradient(145deg, #c53a3a, #9f2323);
-      color: white;
-    }
-    .black-num {
-      background: #1f1f1f;
-      background: linear-gradient(145deg, #2c2c2c, #131313);
-      color: #ffe2b5;
-    }
-    .green-num {
-      background: #23855c;
-      background: linear-gradient(145deg, #2f9e6e, #1a6746);
-      color: #ffefc0;
-    }
+        /* Roulette Board Layout */
+        .board-container {
+            display: grid;
+            grid-template-columns: 60px repeat(12, 60px) 60px;
+            grid-template-rows: repeat(5, 60px);
+            background-color: var(--board-green);
+            border: 2px solid var(--border-color);
+            box-sizing: border-box;
+            gap: 1px;
+            background-color: var(--border-color); /* Acts as borders via gap */
+            margin-bottom: 20px;
+        }
 
-    /* Column bets (2 to 1) – vertical to the right */
-    .column-bets-land {
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      width: 95px;
-    }
-    .col-bet-land {
-      background: #1e4d33;
-      border: 2px solid #eac27d;
-      border-radius: 38px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 0.95rem;
-      text-align: center;
-      color: #fff6df;
-      padding: 8px 5px;
-      transition: 0.1s;
-      min-height: 75px;
-    }
+        .cell {
+            background-color: var(--board-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+            transition: all 0.1s;
+        }
 
-    /* Dozens row (full width under the numbers) */
-    .dozens-land {
-      display: flex;
-      gap: 18px;
-      margin-top: 24px;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-    .dozen-land {
-      background: #1e4d33;
-      border: 2px solid #eac27d;
-      border-radius: 50px;
-      flex: 1;
-      text-align: center;
-      padding: 12px 0;
-      font-weight: bold;
-      font-size: 1rem;
-      color: #fff6df;
-      transition: 0.1s;
-    }
+        .cell:hover {
+            opacity: 0.8;
+        }
 
-    /* Outside bets row – all 6 options */
-    .outside-land {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: space-between;
-      width: 100%;
-    }
-    .outside-land-item {
-      background: #1e4d33;
-      border: 2px solid #eac27d;
-      border-radius: 50px;
-      flex: 1;
-      text-align: center;
-      padding: 12px 8px;
-      font-weight: bold;
-      font-size: 0.95rem;
-      min-width: 85px;
-      color: #fff6df;
-      transition: 0.1s;
-    }
+        .cell span {
+            transform: rotate(-90deg);
+            font-size: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
 
-    /* Highlight styles */
-    .highlight-number-active {
-      background: radial-gradient(circle, #ffda7c, #f0b735) !important;
-      border: 3px solid #fff3bf !important;
-      color: #1f3b10 !important;
-      transform: scale(0.97);
-      box-shadow: 0 0 18px #ffc857;
-      font-weight: 900;
-    }
-    .highlight-bet-active {
-      background: radial-gradient(ellipse at center, #ffcd6b, #eda92b) !important;
-      border: 3px solid #fff0b5 !important;
-      color: #1e2f0a !important;
-      font-weight: bold;
-      transform: scale(0.98);
-      box-shadow: 0 0 14px #f5bc44;
-    }
+        /* Colors */
+        .bg-red { background-color: var(--red-num); }
+        .bg-black { background-color: var(--black-num); }
+        .bg-green { background-color: var(--board-green); }
 
-    /* === PAYOUTS SECTION (UNDERNEATH TABLE) === */
-    .payouts-section {
-      background: #082a18e0;
-      backdrop-filter: blur(4px);
-      border-radius: 48px;
-      padding: 20px 26px;
-      border: 1px solid #efcd8e;
-      margin-top: 6px;
-    }
-    .payout-title {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #ffeac2;
-      border-left: 6px solid #ffc05e;
-      padding-left: 18px;
-      margin-bottom: 18px;
-    }
-    .payout-container {
-      background: #0f2b1c;
-      border-radius: 44px;
-      padding: 18px 24px;
-      min-height: 150px;
-      max-height: 210px;
-      overflow-y: auto;
-    }
-    .payout-item {
-      display: block;
-      font-family: monospace;
-      font-size: 1rem;
-      padding: 8px 0;
-      border-bottom: 1px solid #54855c;
-      color: #fff2cf;
-    }
-    .empty-payout {
-      color: #bbaa77;
-      text-align: center;
-      font-style: italic;
-    }
+        /* Highlight classes */
+        .highlight {
+            box-shadow: inset 0 0 0 4px var(--highlight);
+            z-index: 10;
+        }
+        .highlight span {
+            color: var(--highlight);
+        }
 
-    /* Responsive: keep landscape scroll */
-    @media (max-width: 1000px) {
-      .roulette-app { padding: 16px; }
-      .number-cell-land { font-size: 1rem; padding: 10px 0; }
-      .zero-item, .doublezero-item { font-size: 1.5rem; padding: 12px 0; }
-      .history-chip { width: 54px; height: 54px; font-size: 1.2rem; }
-    }
-  </style>
+        /* Specific Cell Placements */
+        #zero-double { grid-column: 1; grid-row: 1 / 3; }
+        #zero-single { grid-column: 1; grid-row: 3 / 4; height: 120px;}
+
+        /* Adjust 00 and 0 styling to match image split */
+        .zero-wrapper {
+            grid-column: 1;
+            grid-row: 1 / 4;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background-color: var(--border-color);
+        }
+        .zero-cell {
+            flex: 1;
+            background-color: var(--board-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .zero-cell span {
+            transform: rotate(-90deg);
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .zero-cell:hover { opacity: 0.8; }
+        .zero-cell.highlight {
+            box-shadow: inset 0 0 0 4px var(--highlight);
+            color: var(--highlight);
+        }
+
+        /* Bottom outside bets */
+        .dozen { grid-column: auto / span 4; grid-row: 4; }
+        .half, .parity, .color-bet { grid-column: auto / span 2; grid-row: 5; }
+
+        /* Payouts Section */
+        #payouts-container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+            min-height: 150px;
+        }
+
+        #payouts-container h2 {
+            margin-top: 0;
+            color: var(--highlight);
+            border-bottom: 1px solid #666;
+            padding-bottom: 10px;
+        }
+
+        #payouts-list {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        #payouts-list li {
+            font-size: 16px;
+            padding: 5px 0;
+        }
+        
+        #payouts-list li strong {
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-<div class="roulette-app">
-  <!-- === TOP: 3 ROWS PREVIOUS WINS === -->
-  <div class="history-area">
-    <div class="history-header">
-      <h2>🎲 PREVIOUS WINS — 3 ROWS</h2>
-      <button class="clear-all-btn" id="clearAllBtn">🗑️ CLEAR ALL</button>
-    </div>
-    <div class="history-rows" id="historyRowsContainer">
-      <div class="history-row" id="row1"></div>
-      <div class="history-row" id="row2"></div>
-      <div class="history-row" id="row3"></div>
-    </div>
-  </div>
 
-  <!-- === LANDSCAPE AMERICAN ROULETTE TABLE (EXACT LAYOUT) === -->
-  <div class="roulette-table">
-    <div class="landscape-grid">
-      <!-- Zeros column (0 and 00 stacked left) -->
-      <div class="zeros-stack">
-        <div class="zero-item" data-num="0">0</div>
-        <div class="doublezero-item" data-num="00">00</div>
-      </div>
+    <h1>Roulette Tracker</h1>
 
-      <!-- 3 Columns of numbers (1-36) -->
-      <div class="numbers-threecols" id="numbersGridLand"></div>
+    <div id="history-container">
+        </div>
 
-      <!-- Column bets (2:1) right side -->
-      <div class="column-bets-land">
-        <div class="col-bet-land" id="col1BetLand">2️⃣ to 1<br>1st Col</div>
-        <div class="col-bet-land" id="col2BetLand">2️⃣ to 1<br>2nd Col</div>
-        <div class="col-bet-land" id="col3BetLand">2️⃣ to 1<br>3rd Col</div>
-      </div>
+    <div class="controls">
+        <button id="clear-btn">Clear History</button>
     </div>
 
-    <!-- Dozens row (full width) -->
-    <div class="dozens-land">
-      <div class="dozen-land" id="dozen1Land">1st 12<br>(1-12)</div>
-      <div class="dozen-land" id="dozen2Land">2nd 12<br>(13-24)</div>
-      <div class="dozen-land" id="dozen3Land">3rd 12<br>(25-36)</div>
+    <div class="board-container" id="board">
+        <div class="zero-wrapper">
+            <div class="zero-cell num-click" data-num="00" data-type="zero" id="cell-00"><span>00</span></div>
+            <div class="zero-cell num-click" data-num="0" data-type="zero" id="cell-0"><span>0</span></div>
+        </div>
+
+        </div>
+
+    <div id="payouts-container">
+        <h2 id="payout-title">Select a number to view payouts</h2>
+        <ul id="payouts-list">
+            </ul>
     </div>
 
-    <!-- Outside bets: 1-18, EVEN, RED, BLACK, ODD, 19-36 -->
-    <div class="outside-land">
-      <div class="outside-land-item" id="lowBetLand">1 to 18</div>
-      <div class="outside-land-item" id="evenBetLand">EVEN</div>
-      <div class="outside-land-item" id="redBetLand">RED</div>
-      <div class="outside-land-item" id="blackBetLand">BLACK</div>
-      <div class="outside-land-item" id="oddBetLand">ODD</div>
-      <div class="outside-land-item" id="highBetLand">19 to 36</div>
-    </div>
-  </div>
+    <script>
+        // Board Configuration
+        const boardEl = document.getElementById('board');
+        const historyContainer = document.getElementById('history-container');
+        const payoutsList = document.getElementById('payouts-list');
+        const payoutTitle = document.getElementById('payout-title');
+        
+        const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+        const blackNumbers = [2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35];
 
-  <!-- === PAYOUTS SECTION (UNDER TABLE) === -->
-  <div class="payouts-section">
-    <div class="payout-title">💰 WINNING PAYOUTS (for selected number)</div>
-    <div class="payout-container" id="payoutContainer">
-      <div class="empty-payout">✨ Click any number on the table to see all winning bets & odds</div>
-    </div>
-  </div>
-</div>
+        let history = [];
 
-<script>
-  // ---------- AMERICAN ROULETTE DATA ----------
-  const redNumbersSet = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
-  const blackNumbersSet = new Set([2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35]);
+        // Build the Numbers Grid
+        const buildBoard = () => {
+            // Row 1 (Top): 3, 6, 9...
+            for(let i = 3; i <= 36; i += 3) createNumberCell(i, 1, (i/3) + 1);
+            // Row 2 (Middle): 2, 5, 8...
+            for(let i = 2; i <= 35; i += 3) createNumberCell(i, 2, Math.ceil(i/3) + 1);
+            // Row 3 (Bottom): 1, 4, 7...
+            for(let i = 1; i <= 34; i += 3) createNumberCell(i, 3, Math.ceil(i/3) + 1);
 
-  function getColor(num) {
-    if (num === 0 || num === '00') return 'green';
-    const n = Number(num);
-    if (redNumbersSet.has(n)) return 'red';
-    if (blackNumbersSet.has(n)) return 'black';
-    return 'green';
-  }
+            // Column Bets (2 to 1)
+            createOutsideCell('2 to 1', 'col-3', 1, 14);
+            createOutsideCell('2 to 1', 'col-2', 2, 14);
+            createOutsideCell('2 to 1', 'col-1', 3, 14);
 
-  function getColumn(num) {
-    if (num === 0 || num === '00') return null;
-    const n = Number(num);
-    if (n % 3 === 1) return 1;
-    if (n % 3 === 2) return 2;
-    return 3;
-  }
+            // Dozens
+            createOutsideCell('1st 12', 'doz-1', 4, 2, 4, 'dozen');
+            createOutsideCell('2nd 12', 'doz-2', 4, 6, 4, 'dozen');
+            createOutsideCell('3rd 12', 'doz-3', 4, 10, 4, 'dozen');
 
-  function getDozen(num) {
-    if (num === 0 || num === '00') return null;
-    const n = Number(num);
-    if (n >= 1 && n <= 12) return 1;
-    if (n >= 13 && n <= 24) return 2;
-    if (n >= 25 && n <= 36) return 3;
-    return null;
-  }
+            // Bottom Row Bets
+            createOutsideCell('1 to 18', 'low', 5, 2, 2, 'half');
+            createOutsideCell('Even', 'even', 5, 4, 2, 'parity');
+            createOutsideCell('Red', 'red', 5, 6, 2, 'color-bet bg-red');
+            createOutsideCell('Black', 'black', 5, 8, 2, 'color-bet bg-black');
+            createOutsideCell('Odd', 'odd', 5, 10, 2, 'parity');
+            createOutsideCell('19 to 36', 'high', 5, 12, 2, 'half');
+        };
 
-  function getParity(num) {
-    if (num === 0 || num === '00') return null;
-    const n = Number(num);
-    return n % 2 === 0 ? 'even' : 'odd';
-  }
+        const getColorClass = (num) => {
+            if (redNumbers.includes(num)) return 'bg-red';
+            if (blackNumbers.includes(num)) return 'bg-black';
+            return 'bg-green';
+        };
 
-  function getHalf(num) {
-    if (num === 0 || num === '00') return null;
-    const n = Number(num);
-    return n <= 18 ? 'low' : 'high';
-  }
+        const createNumberCell = (num, row, col) => {
+            const div = document.createElement('div');
+            div.className = `cell num-click ${getColorClass(num)}`;
+            div.style.gridRow = row;
+            div.style.gridColumn = col;
+            div.dataset.num = num;
+            div.id = `cell-${num}`;
+            div.innerHTML = `<span>${num}</span>`;
+            boardEl.appendChild(div);
+        };
 
-  // DOM references for history rows
-  const row1El = document.getElementById('row1');
-  const row2El = document.getElementById('row2');
-  const row3El = document.getElementById('row3');
-  const numbersGridLand = document.getElementById('numbersGridLand');
-  const payoutContainer = document.getElementById('payoutContainer');
-  const clearAllBtn = document.getElementById('clearAllBtn');
+        const createOutsideCell = (text, id, row, col, span = 1, extraClass = '') => {
+            const div = document.createElement('div');
+            div.className = `cell outside ${extraClass}`;
+            div.style.gridRow = row;
+            div.style.gridColumn = `${col} / span ${span}`;
+            div.id = `bet-${id}`;
+            div.innerHTML = `<span>${text}</span>`;
+            boardEl.appendChild(div);
+        };
 
-  // Betting elements (landscape version)
-  const col1Bet = document.getElementById('col1BetLand');
-  const col2Bet = document.getElementById('col2BetLand');
-  const col3Bet = document.getElementById('col3BetLand');
-  const dozen1Bet = document.getElementById('dozen1Land');
-  const dozen2Bet = document.getElementById('dozen2Land');
-  const dozen3Bet = document.getElementById('dozen3Land');
-  const lowBet = document.getElementById('lowBetLand');
-  const highBet = document.getElementById('highBetLand');
-  const evenBet = document.getElementById('evenBetLand');
-  const oddBet = document.getElementById('oddBetLand');
-  const redBet = document.getElementById('redBetLand');
-  const blackBet = document.getElementById('blackBetLand');
+        // Interaction Logic
+        boardEl.addEventListener('click', (e) => {
+            const cell = e.target.closest('.num-click');
+            if (!cell) return;
 
-  // Data stores
-  let allSpins = [];          // array of strings: "0", "00", "1"... "36"
-  let currentSelected = null;
-  const numberElementMap = new Map();   // key: string number -> DOM element
+            const numStr = cell.dataset.num;
+            processSpin(numStr);
+        });
 
-  // ========== 3-ROW HISTORY RENDERING ==========
-  function renderThreeRowHistory() {
-    row1El.innerHTML = '';
-    row2El.innerHTML = '';
-    row3El.innerHTML = '';
+        const processSpin = (numStr) => {
+            clearHighlights();
 
-    if (allSpins.length === 0) {
-      row1El.innerHTML = '<div class="empty-row-msg">🎯 No spins yet — click any number</div>';
-      row2El.innerHTML = '';
-      row3El.innerHTML = '';
-      return;
-    }
+            let numObj = { val: numStr, color: 'green' };
+            let isZero = (numStr === '0' || numStr === '00');
+            let numInt = parseInt(numStr);
 
-    // Show newest first (latest spins at beginning of row1)
-    const reversedSpins = [...allSpins].reverse();
-    const itemsPerRow = Math.ceil(reversedSpins.length / 3);
-    const rowsData = [[], [], []];
-    for (let i = 0; i < reversedSpins.length; i++) {
-      const rowIndex = Math.floor(i / itemsPerRow);
-      if (rowIndex < 3) rowsData[rowIndex].push(reversedSpins[i]);
-    }
+            let winningBets = [{ name: `Straight Up (${numStr})`, payout: '35 to 1' }];
 
-    for (let r = 0; r < 3; r++) {
-      const targetRow = r === 0 ? row1El : (r === 1 ? row2El : row3El);
-      if (rowsData[r].length === 0) {
-        targetRow.innerHTML = '<div class="empty-row-msg">——</div>';
-        continue;
-      }
-      rowsData[r].forEach(num => {
-        const bgColor = (() => {
-          const col = getColor(num);
-          if (col === 'red') return '#c83a3a';
-          if (col === 'black') return '#2a2a2a';
-          return '#2f7852';
-        })();
-        const chip = document.createElement('div');
-        chip.className = 'history-chip';
-        chip.style.background = `radial-gradient(circle at 30% 35%, ${bgColor}, ${bgColor}dd)`;
-        chip.innerText = num;
-        targetRow.appendChild(chip);
-      });
-    }
-  }
+            if (!isZero) {
+                // Determine color
+                if (redNumbers.includes(numInt)) {
+                    numObj.color = 'red';
+                    document.getElementById('bet-red').classList.add('highlight');
+                    winningBets.push({ name: 'Red', payout: '1 to 1' });
+                } else {
+                    numObj.color = 'black';
+                    document.getElementById('bet-black').classList.add('highlight');
+                    winningBets.push({ name: 'Black', payout: '1 to 1' });
+                }
 
-  function addSpinToHistory(number) {
-    allSpins.push(String(number));
-    renderThreeRowHistory();
-  }
+                // Determine Parity
+                if (numInt % 2 === 0) {
+                    document.getElementById('bet-even').classList.add('highlight');
+                    winningBets.push({ name: 'Even', payout: '1 to 1' });
+                } else {
+                    document.getElementById('bet-odd').classList.add('highlight');
+                    winningBets.push({ name: 'Odd', payout: '1 to 1' });
+                }
 
-  // ========== HIGHLIGHT MANAGEMENT ==========
-  function removeAllHighlights() {
-    document.querySelectorAll('.number-cell-land, .zero-item, .doublezero-item').forEach(el => {
-      el.classList.remove('highlight-number-active');
-    });
-    const allBetZones = [col1Bet, col2Bet, col3Bet, dozen1Bet, dozen2Bet, dozen3Bet,
-                         lowBet, highBet, evenBet, oddBet, redBet, blackBet];
-    allBetZones.forEach(zone => {
-      if (zone) zone.classList.remove('highlight-bet-active');
-    });
-  }
+                // Determine High/Low
+                if (numInt <= 18) {
+                    document.getElementById('bet-low').classList.add('highlight');
+                    winningBets.push({ name: '1 to 18', payout: '1 to 1' });
+                } else {
+                    document.getElementById('bet-high').classList.add('highlight');
+                    winningBets.push({ name: '19 to 36', payout: '1 to 1' });
+                }
 
-  function highlightWinningBets(number) {
-    if (number === null) return;
-    const numValue = (number === '00') ? '00' : Number(number);
-    const color = getColor(numValue);
-    if (color === 'red') redBet.classList.add('highlight-bet-active');
-    if (color === 'black') blackBet.classList.add('highlight-bet-active');
-    
-    const parity = getParity(numValue);
-    if (parity === 'even') evenBet.classList.add('highlight-bet-active');
-    if (parity === 'odd') oddBet.classList.add('highlight-bet-active');
-    
-    const half = getHalf(numValue);
-    if (half === 'low') lowBet.classList.add('highlight-bet-active');
-    if (half === 'high') highBet.classList.add('highlight-bet-active');
-    
-    const dozenIdx = getDozen(numValue);
-    if (dozenIdx === 1) dozen1Bet.classList.add('highlight-bet-active');
-    if (dozenIdx === 2) dozen2Bet.classList.add('highlight-bet-active');
-    if (dozenIdx === 3) dozen3Bet.classList.add('highlight-bet-active');
-    
-    const colIdx = getColumn(numValue);
-    if (colIdx === 1) col1Bet.classList.add('highlight-bet-active');
-    if (colIdx === 2) col2Bet.classList.add('highlight-bet-active');
-    if (colIdx === 3) col3Bet.classList.add('highlight-bet-active');
-  }
+                // Determine Dozen
+                if (numInt <= 12) {
+                    document.getElementById('bet-doz-1').classList.add('highlight');
+                    winningBets.push({ name: '1st 12', payout: '2 to 1' });
+                } else if (numInt <= 24) {
+                    document.getElementById('bet-doz-2').classList.add('highlight');
+                    winningBets.push({ name: '2nd 12', payout: '2 to 1' });
+                } else {
+                    document.getElementById('bet-doz-3').classList.add('highlight');
+                    winningBets.push({ name: '3rd 12', payout: '2 to 1' });
+                }
 
-  // ========== PAYOUT GENERATION ==========
-  function getPayoutDescriptions(number) {
-    if (number === null) return [];
-    const numVal = (number === '00') ? '00' : Number(number);
-    const payouts = [];
-    payouts.push(`🎯 STRAIGHT UP ${number} — 35:1`);
-    
-    if (numVal !== 0 && numVal !== '00') {
-      const color = getColor(numVal);
-      if (color === 'red') payouts.push(`🔴 RED — 1:1`);
-      if (color === 'black') payouts.push(`⚫ BLACK — 1:1`);
-      
-      const parity = getParity(numVal);
-      if (parity === 'even') payouts.push(`🟢 EVEN — 1:1`);
-      if (parity === 'odd') payouts.push(`🔵 ODD — 1:1`);
-      
-      const half = getHalf(numVal);
-      if (half === 'low') payouts.push(`⬇️ 1 to 18 — 1:1`);
-      if (half === 'high') payouts.push(`⬆️ 19 to 36 — 1:1`);
-      
-      const dozenIdx = getDozen(numVal);
-      if (dozenIdx === 1) payouts.push(`📦 1st DOZEN (1-12) — 2:1`);
-      if (dozenIdx === 2) payouts.push(`📦 2nd DOZEN (13-24) — 2:1`);
-      if (dozenIdx === 3) payouts.push(`📦 3rd DOZEN (25-36) — 2:1`);
-      
-      const colIdx = getColumn(numVal);
-      if (colIdx === 1) payouts.push(`📌 COLUMN 1 (2:1) — 2:1`);
-      if (colIdx === 2) payouts.push(`📌 COLUMN 2 (2:1) — 2:1`);
-      if (colIdx === 3) payouts.push(`📌 COLUMN 3 (2:1) — 2:1`);
-    } else {
-      payouts.push(`🟢 ${number} (Green Zero) — Only Straight Up 35:1`);
-    }
-    return payouts;
-  }
+                // Determine Column
+                if (numInt % 3 === 0) {
+                    document.getElementById('bet-col-3').classList.add('highlight');
+                    winningBets.push({ name: '3rd Column', payout: '2 to 1' });
+                } else if (numInt % 3 === 2) {
+                    document.getElementById('bet-col-2').classList.add('highlight');
+                    winningBets.push({ name: '2nd Column', payout: '2 to 1' });
+                } else {
+                    document.getElementById('bet-col-1').classList.add('highlight');
+                    winningBets.push({ name: '1st Column', payout: '2 to 1' });
+                }
+            }
 
-  function updatePayoutsPanel(number) {
-    const list = getPayoutDescriptions(number);
-    if (!list.length) {
-      payoutContainer.innerHTML = '<div class="empty-payout">⚡ Click any number to see payouts</div>';
-      return;
-    }
-    payoutContainer.innerHTML = list.map(text => `<div class="payout-item">💰 ${text}</div>`).join('');
-  }
+            // Highlight the specific number
+            document.getElementById(`cell-${numStr}`).classList.add('highlight');
 
-  // ========== CORE: NUMBER CLICK ==========
-  function onNumberClick(number) {
-    addSpinToHistory(number);
-    currentSelected = number;
-    removeAllHighlights();
-    const clickedElem = numberElementMap.get(String(number));
-    if (clickedElem) clickedElem.classList.add('highlight-number-active');
-    highlightWinningBets(number);
-    updatePayoutsPanel(number);
-  }
+            // Update UI
+            updateHistory(numObj);
+            updatePayouts(numStr, winningBets);
+        };
 
-  function clearAllData() {
-    allSpins = [];
-    currentSelected = null;
-    renderThreeRowHistory();
-    removeAllHighlights();
-    updatePayoutsPanel(null);
-    payoutContainer.innerHTML = '<div class="empty-payout">✨ Cleared — pick a number to see payouts</div>';
-  }
+        const clearHighlights = () => {
+            document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+        };
 
-  // ========== BUILD NUMBER GRID (LANDSCAPE 3 COLUMNS) ==========
-  function buildNumberGrid() {
-    const col1Numbers = [1,4,7,10,13,16,19,22,25,28,31,34];
-    const col2Numbers = [2,5,8,11,14,17,20,23,26,29,32,35];
-    const col3Numbers = [3,6,9,12,15,18,21,24,27,30,33,36];
-    
-    const col1Div = document.createElement('div'); col1Div.className = 'num-col-land';
-    const col2Div = document.createElement('div'); col2Div.className = 'num-col-land';
-    const col3Div = document.createElement('div'); col3Div.className = 'num-col-land';
-    
-    function createNumberCell(num) {
-      const div = document.createElement('div');
-      div.className = 'number-cell-land';
-      const colorType = getColor(num);
-      if (colorType === 'red') div.classList.add('red-num');
-      else if (colorType === 'black') div.classList.add('black-num');
-      else div.classList.add('green-num');
-      div.innerText = num;
-      div.addEventListener('click', (e) => {
-        e.stopPropagation();
-        onNumberClick(num);
-      });
-      return div;
-    }
-    
-    col1Numbers.forEach(n => {
-      const el = createNumberCell(n);
-      col1Div.appendChild(el);
-      numberElementMap.set(String(n), el);
-    });
-    col2Numbers.forEach(n => {
-      const el = createNumberCell(n);
-      col2Div.appendChild(el);
-      numberElementMap.set(String(n), el);
-    });
-    col3Numbers.forEach(n => {
-      const el = createNumberCell(n);
-      col3Div.appendChild(el);
-      numberElementMap.set(String(n), el);
-    });
-    
-    numbersGridLand.appendChild(col1Div);
-    numbersGridLand.appendChild(col2Div);
-    numbersGridLand.appendChild(col3Div);
-  }
-  
-  function attachZeroEvents() {
-    const zeroElem = document.querySelector('.zero-item');
-    const doubleZeroElem = document.querySelector('.doublezero-item');
-    if (zeroElem) {
-      zeroElem.addEventListener('click', () => onNumberClick('0'));
-      numberElementMap.set('0', zeroElem);
-    }
-    if (doubleZeroElem) {
-      doubleZeroElem.addEventListener('click', () => onNumberClick('00'));
-      numberElementMap.set('00', doubleZeroElem);
-    }
-  }
-  
-  function setBetZonesCursor() {
-    const allBets = [col1Bet, col2Bet, col3Bet, dozen1Bet, dozen2Bet, dozen3Bet,
-                     lowBet, highBet, evenBet, oddBet, redBet, blackBet];
-    allBets.forEach(b => { if (b) b.style.cursor = 'default'; });
-  }
-  
-  // INITIALIZE
-  function init() {
-    buildNumberGrid();
-    attachZeroEvents();
-    setBetZonesCursor();
-    clearAllBtn.addEventListener('click', clearAllData);
-    renderThreeRowHistory();
-    updatePayoutsPanel(null);
-  }
-  
-  init();
-</script>
+        const updateHistory = (numObj) => {
+            history.unshift(numObj);
+            
+            // Limit history to keep layout clean (approx 50 elements)
+            if (history.length > 50) history.pop();
+
+            renderHistory();
+        };
+
+        const renderHistory = () => {
+            historyContainer.innerHTML = '';
+            history.forEach(item => {
+                const ball = document.createElement('div');
+                ball.className = 'history-ball';
+                
+                if (item.color === 'red') ball.style.backgroundColor = 'var(--red-num)';
+                else if (item.color === 'black') ball.style.backgroundColor = 'var(--black-num)';
+                else ball.style.backgroundColor = 'var(--board-green)';
+                
+                ball.textContent = item.val;
+                historyContainer.appendChild(ball);
+            });
+        };
+
+        const updatePayouts = (numStr, winningBets) => {
+            payoutTitle.textContent = `Winning Payouts for: ${numStr}`;
+            payoutsList.innerHTML = '';
+            
+            winningBets.forEach(bet => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${bet.name}:</strong> <span style="color:var(--highlight)">${bet.payout}</span>`;
+                payoutsList.appendChild(li);
+            });
+        };
+
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            history = [];
+            renderHistory();
+            clearHighlights();
+            payoutTitle.textContent = 'Select a number to view payouts';
+            payoutsList.innerHTML = '';
+        });
+
+        // Initialize Board
+        buildBoard();
+
+    </script>
 </body>
 </html>
