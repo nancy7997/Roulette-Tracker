@@ -6,7 +6,7 @@
     <title>Interactive American Roulette Tracker</title>
     <style>
         :root {
-            /* Duller, darker green for the background felt to increase contrast */
+            /* Duller, darker green for the background felt */
             --green-felt: #224a2e; 
             /* Bolder, brighter green for the 0, 00, and board base */
             --board-green: #0a8c3a; 
@@ -207,13 +207,16 @@
             list-style-type: none;
             padding: 0;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Increased width to fit longer lists */
             gap: 20px;
         }
 
         #payouts-list li {
             font-size: 20px;
-            padding: 5px 0;
+            padding: 8px 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            border-left: 3px solid var(--highlight);
         }
         
         #payouts-list li strong {
@@ -221,11 +224,20 @@
             white-space: nowrap;
         }
 
+        .bet-desc {
+            display: block;
+            font-size: 14px;
+            color: #bbb;
+            margin-top: 2px;
+            line-height: 1.3;
+        }
+
         .payout-amount {
             color: var(--highlight);
             display: block;
             margin-top: 4px;
             white-space: nowrap;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -245,8 +257,7 @@
             <div class="zero-cell num-click" data-num="00" data-type="zero" id="cell-00"><span>00</span></div>
             <div class="zero-cell num-click" data-num="0" data-type="zero" id="cell-0"><span>0</span></div>
         </div>
-
-        </div>
+    </div>
 
     <div id="payouts-container">
         <h2 id="payout-title">Select a number to view payouts</h2>
@@ -337,6 +348,77 @@
             boardEl.appendChild(div);
         };
 
+        // Calculates all winning inside bet combinations (Splits, Streets, Corners, etc.)
+        const getWinningInsideBets = (numStr) => {
+            let bets = [];
+            let numInt = parseInt(numStr);
+            let isZero = (numStr === '0' || numStr === '00');
+
+            if (isZero) {
+                if (numStr === '0') {
+                    bets.push({ name: 'Split', desc: '0-00, 0-1, 0-2', payout: '17 to 1' });
+                    bets.push({ name: 'Basket', desc: '0-1-2, 0-00-2', payout: '11 to 1' });
+                } else {
+                    bets.push({ name: 'Split', desc: '0-00, 00-2, 00-3', payout: '17 to 1' });
+                    bets.push({ name: 'Basket', desc: '0-00-2, 00-2-3', payout: '11 to 1' });
+                }
+                bets.push({ name: 'Top Line', desc: '0-00-1-2-3', payout: '6 to 1' });
+                return bets;
+            }
+
+            let r = Math.ceil(numInt / 3);
+            let c = (numInt % 3 === 0) ? 3 : numInt % 3;
+
+            // Splits
+            let splits = [];
+            if (numInt > 3) splits.push(`${numInt-3}-${numInt}`); // Up
+            if (numInt < 34) splits.push(`${numInt}-${numInt+3}`); // Down
+            if (c > 1) splits.push(`${numInt-1}-${numInt}`); // Left
+            if (c < 3) splits.push(`${numInt}-${numInt+1}`); // Right
+            if (numInt === 1) splits.push('0-1');
+            if (numInt === 2) { splits.push('0-2'); splits.push('00-2'); }
+            if (numInt === 3) splits.push('00-3');
+            bets.push({ name: 'Split', desc: splits.join(', '), payout: '17 to 1' });
+
+            // Street
+            let streetStart = (r - 1) * 3 + 1;
+            bets.push({ name: 'Street', desc: `${streetStart}, ${streetStart+1}, ${streetStart+2}`, payout: '11 to 1' });
+
+            // Corners
+            let corners = [];
+            if (r > 1 && c > 1) corners.push(`${numInt-4}-${numInt-3}-${numInt-1}-${numInt}`); // Top-Left
+            if (r > 1 && c < 3) corners.push(`${numInt-3}-${numInt-2}-${numInt}-${numInt+1}`); // Top-Right
+            if (r < 12 && c > 1) corners.push(`${numInt-1}-${numInt}-${numInt+2}-${numInt+3}`); // Bottom-Left
+            if (r < 12 && c < 3) corners.push(`${numInt}-${numInt+1}-${numInt+3}-${numInt+4}`); // Bottom-Right
+            if (corners.length > 0) {
+                bets.push({ name: 'Corner', desc: corners.join(' | '), payout: '8 to 1' });
+            }
+
+            // Six Line
+            let sixLines = [];
+            if (r > 1) {
+                let topStart = (r - 2) * 3 + 1;
+                sixLines.push(`${topStart} to ${topStart+5}`);
+            }
+            if (r < 12) {
+                let botStart = (r - 1) * 3 + 1;
+                sixLines.push(`${botStart} to ${botStart+5}`);
+            }
+            bets.push({ name: 'Six Line', desc: sixLines.join(' | '), payout: '5 to 1' });
+
+            // Basket & Top Line interactions with 1, 2, 3
+            if (numInt <= 3) {
+                let baskets = [];
+                if (numInt === 1) baskets.push('0-1-2');
+                if (numInt === 2) { baskets.push('0-1-2'); baskets.push('0-00-2'); baskets.push('00-2-3'); }
+                if (numInt === 3) baskets.push('00-2-3');
+                bets.push({ name: 'Basket', desc: baskets.join(' | '), payout: '11 to 1' });
+                bets.push({ name: 'Top Line', desc: '0-00-1-2-3', payout: '6 to 1' });
+            }
+
+            return bets;
+        };
+
         // Interaction Logic
         boardEl.addEventListener('click', (e) => {
             const cell = e.target.closest('.num-click');
@@ -353,60 +435,63 @@
             let isZero = (numStr === '0' || numStr === '00');
             let numInt = parseInt(numStr);
 
-            let winningBets = [{ name: `Straight Up (${numStr})`, payout: '35 to 1' }];
+            let winningBets = [{ name: `Straight Up`, desc: `Number: ${numStr}`, payout: '35 to 1' }];
+            
+            // Add inside split/corner/street calculations
+            winningBets = winningBets.concat(getWinningInsideBets(numStr));
 
             if (!isZero) {
                 // Determine color
                 if (redNumbers.includes(numInt)) {
                     numObj.color = 'red';
                     document.getElementById('bet-red').classList.add('highlight');
-                    winningBets.push({ name: 'Red', payout: '1 to 1' });
+                    winningBets.push({ name: 'Red', desc: '', payout: '1 to 1' });
                 } else {
                     numObj.color = 'black';
                     document.getElementById('bet-black').classList.add('highlight');
-                    winningBets.push({ name: 'Black', payout: '1 to 1' });
+                    winningBets.push({ name: 'Black', desc: '', payout: '1 to 1' });
                 }
 
                 // Determine Parity
                 if (numInt % 2 === 0) {
                     document.getElementById('bet-even').classList.add('highlight');
-                    winningBets.push({ name: 'Even', payout: '1 to 1' });
+                    winningBets.push({ name: 'Even', desc: '', payout: '1 to 1' });
                 } else {
                     document.getElementById('bet-odd').classList.add('highlight');
-                    winningBets.push({ name: 'Odd', payout: '1 to 1' });
+                    winningBets.push({ name: 'Odd', desc: '', payout: '1 to 1' });
                 }
 
                 // Determine High/Low
                 if (numInt <= 18) {
                     document.getElementById('bet-low').classList.add('highlight');
-                    winningBets.push({ name: '1 to 18', payout: '1 to 1' });
+                    winningBets.push({ name: '1 to 18', desc: '', payout: '1 to 1' });
                 } else {
                     document.getElementById('bet-high').classList.add('highlight');
-                    winningBets.push({ name: '19 to 36', payout: '1 to 1' });
+                    winningBets.push({ name: '19 to 36', desc: '', payout: '1 to 1' });
                 }
 
                 // Determine Dozen
                 if (numInt <= 12) {
                     document.getElementById('bet-doz-1').classList.add('highlight');
-                    winningBets.push({ name: '1st 12', payout: '2 to 1' });
+                    winningBets.push({ name: '1st Dozen', desc: '1 through 12', payout: '2 to 1' });
                 } else if (numInt <= 24) {
                     document.getElementById('bet-doz-2').classList.add('highlight');
-                    winningBets.push({ name: '2nd 12', payout: '2 to 1' });
+                    winningBets.push({ name: '2nd Dozen', desc: '13 through 24', payout: '2 to 1' });
                 } else {
                     document.getElementById('bet-doz-3').classList.add('highlight');
-                    winningBets.push({ name: '3rd 12', payout: '2 to 1' });
+                    winningBets.push({ name: '3rd Dozen', desc: '25 through 36', payout: '2 to 1' });
                 }
 
                 // Determine Column
                 if (numInt % 3 === 0) {
                     document.getElementById('bet-col-3').classList.add('highlight');
-                    winningBets.push({ name: '3rd Column', payout: '2 to 1' });
+                    winningBets.push({ name: '3rd Column', desc: '3, 6, 9...', payout: '2 to 1' });
                 } else if (numInt % 3 === 2) {
                     document.getElementById('bet-col-2').classList.add('highlight');
-                    winningBets.push({ name: '2nd Column', payout: '2 to 1' });
+                    winningBets.push({ name: '2nd Column', desc: '2, 5, 8...', payout: '2 to 1' });
                 } else {
                     document.getElementById('bet-col-1').classList.add('highlight');
-                    winningBets.push({ name: '1st Column', payout: '2 to 1' });
+                    winningBets.push({ name: '1st Column', desc: '1, 4, 7...', payout: '2 to 1' });
                 }
             }
 
@@ -447,12 +532,13 @@
         };
 
         const updatePayouts = (numStr, winningBets) => {
-            payoutTitle.textContent = `Winning Payouts for: ${numStr}`;
+            payoutTitle.textContent = `Winning Payouts for Number: ${numStr}`;
             payoutsList.innerHTML = '';
             
             winningBets.forEach(bet => {
                 const li = document.createElement('li');
-                li.innerHTML = `<strong>${bet.name}</strong><span class="payout-amount">${bet.payout}</span>`;
+                let descHtml = bet.desc ? `<span class="bet-desc">${bet.desc}</span>` : '';
+                li.innerHTML = `<strong>${bet.name}</strong>${descHtml}<span class="payout-amount">${bet.payout}</span>`;
                 payoutsList.appendChild(li);
             });
         };
