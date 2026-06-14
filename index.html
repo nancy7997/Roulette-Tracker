@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Roulette Royal Tracker – Live Bet Highlights & Payouts</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(145deg, #1a3c2c 0%, #0e2a1e 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Roboto', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Main casino-style dashboard */
+        .roulette-app {
+            max-width: 1400px;
+            width: 100%;
+            background: #2d1f12;
+            background-image: radial-gradient(circle at 25% 40%, rgba(210, 180, 140, 0.08) 2%, transparent 2.5%);
+            background-size: 28px 28px;
+            border-radius: 56px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            padding: 24px 28px;
+            transition: all 0.2s;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin: 0 0 8px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #f9e0a0, #c7a252);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 3px rgba(0,0,0,0.2);
+            display: inline-block;
+        }
+
+        .sub {
+            color: #ddbb77;
+            margin-bottom: 20px;
+            border-left: 3px solid #e5b874;
+            padding-left: 15px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* main grid: table + history & controls */
+        .game-dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 26px;
+        }
+
+        .table-section {
+            flex: 3;
+            min-width: 620px;
+            background: #1e3a2f;
+            background: linear-gradient(112deg, #1e3a2f 0%, #143126 100%);
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: inset 0 0 0 1px rgba(255,215,140,0.2), 0 12px 24px rgba(0,0,0,0.3);
+        }
+
+        .history-panel {
+            flex: 1.4;
+            min-width: 250px;
+            background: #1f1b14e6;
+            backdrop-filter: blur(4px);
+            background: #1f1a10;
+            border-radius: 36px;
+            padding: 18px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            border: 1px solid #b78e4b60;
+        }
+
+        /* roulette numbers grid layout */
+        .roulette-grid {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 7px;
+            background-color: #0f2a1e;
+            padding: 12px;
+            border-radius: 32px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 0 2px #2d5a3e, 0 8px 12px rgba(0,0,0,0.2);
+        }
+
+        /* zero block */
+        .zero-cell {
+            grid-column: span 1;
+            background: #215d3c;
+        }
+
+        .number-cell {
+            background: #273d30;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            padding: 10px 4px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            color: #f5f0e0;
+            box-shadow: inset 0 -2px 0 #0c1f15, 0 2px 5px black;
+            font-family: monospace;
+        }
+
+        .number-cell:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+
+        /* colors */
+        .red { background: #b12a2a; background: linear-gradient(145deg, #c63a2a, #9f1f1a); color: white; text-shadow: 0 1px 1px black; }
+        .black { background: #212121; background: linear-gradient(145deg, #2b2b2b, #111); color: #f0e6c5; }
+        .green { background: #1d7340; background: radial-gradient(circle at 30% 20%, #2a9d5e, #0e5c34); color: gold; }
+
+        .highlight-win {
+            box-shadow: 0 0 0 3px #ffd966, 0 0 0 6px #ffb347, inset 0 0 0 2px white;
+            transform: scale(1.02);
+            transition: 0.07s linear;
+            z-index: 2;
+            position: relative;
+        }
+
+        /* external betting areas (dozens, columns, outside) */
+        .outside-bets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0 12px 0;
+        }
+
+        .bet-tile {
+            background: #322616;
+            padding: 12px 6px;
+            text-align: center;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #eedd99;
+            cursor: default;
+            transition: all 0.1s;
+            border: 1px solid #cb9e54;
+        }
+
+        .winning-outside {
+            background: #f3b33d;
+            color: #1f2a0e;
+            box-shadow: 0 0 0 2px gold, 0 0 0 5px #ffd58c;
+            border: none;
+            font-weight: 800;
+        }
+
+        .payout-badge {
+            font-size: 0.7rem;
+            background: #000000aa;
+            border-radius: 20px;
+            padding: 2px 6px;
+            margin-left: 6px;
+        }
+
+        .history-list {
+            max-height: 460px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .history-item {
+            background: #2c2418;
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-weight: bold;
+            border-left: 6px solid;
+            font-size: 1.2rem;
+        }
+
+        .color-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .current-spin-area {
+            background: #221d12;
+            border-radius: 40px;
+            padding: 12px 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .spin-selector {
+            background: #020d07;
+            padding: 6px 12px;
+            border-radius: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 130px;
+            overflow-y: auto;
+        }
+
+        .mini-num {
+            width: 48px;
+            background: #374e3f;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.05s linear;
+        }
+
+        .win-summary {
+            background: #000000aa;
+            border-radius: 32px;
+            padding: 8px 18px;
+            font-family: monospace;
+            font-size: 1rem;
+            color: #ffeaac;
+        }
+
+        button {
+            background: #c9a03d;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        hr {
+            border-color: #7a5a2e;
+        }
+
+        .payout-highlight-text {
+            font-size: 0.9rem;
+            background: #2c2418;
+            border-radius: 28px;
+            padding: 10px 15px;
+        }
+
+        @media (max-width: 950px) {
+            .roulette-grid { gap: 4px; }
+            .number-cell { font-size: 1rem; padding: 6px 2px; }
+            .table-section { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="roulette-app">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+        <div>
+            <h1>🎰 EMPRESS ROULETTE</h1>
+            <div class="sub">track • highlight • payout analyzer</div>
+        </div>
+        <div class="win-summary" id="lastWinSummary">✨ last win: —</div>
+    </div>
+
+    <div class="game-dashboard">
+        <!-- ROULETTE TABLE -->
+        <div class="table-section">
+            <div class="roulette-grid" id="rouletteNumbersGrid"></div>
+
+            <!-- outside bets: dozens, columns, even chances-->
+            <div class="outside-bets">
+                <div class="bet-tile" data-bet="1st12">1st 12 (1-12) <span class="payout-badge">2:1</span></div>
+                <div class="bet-tile" data-bet="2nd12">2nd 12 (13-24) <span class="payout-badge">2:1</span></div>
+                <div class="bet-tile" data-bet="3rd12">3rd 12 (25-36) <span class="payout-badge">2:1</span></div>
+                <div class="bet-tile" data-bet="1stCol">Column 1 <span class="payout-badge">2:1</span></div>
+                <div class="bet-tile" data-bet="2ndCol">Column 2 <span class="payout-badge">2:1</span></div>
+                <div class="bet-tile" data-bet="3rdCol">Column 3 <span class="payout-badge">2:1</span></div>
+                <div class="bet-tile" data-bet="1to18">1 to 18 <span class="payout-badge">1:1</span></div>
+                <div class="bet-tile" data-bet="19to36">19 to 36 <span class="payout-badge">1:1</span></div>
+                <div class="bet-tile" data-bet="ODD">ODD <span class="payout-badge">1:1</span></div>
+                <div class="bet-tile" data-bet="EVEN">EVEN <span class="payout-badge">1:1</span></div>
+                <div class="bet-tile" data-bet="RED">RED <span class="payout-badge">1:1</span></div>
+                <div class="bet-tile" data-bet="BLACK">BLACK <span class="payout-badge">1:1</span></div>
+            </div>
+
+            <div class="current-spin-area">
+                <div style="font-weight: bold;">🎲 SELECT LAST RESULT:</div>
+                <div class="spin-selector" id="quickNumberPicker"></div>
+                <button id="resetHistoryBtn">⟳ CLEAR HISTORY</button>
+            </div>
+        </div>
+
+        <!-- HISTORY & PAYOUT DISPLAY -->
+        <div class="history-panel">
+            <div style="font-size: 1.4rem; font-weight: bold; border-bottom: 2px solid #e0a653; margin-bottom: 12px;">📜 SPIN HISTORY</div>
+            <div id="historyList" class="history-list">
+                <div style="text-align: center; opacity: 0.7;">— no spins yet —</div>
+            </div>
+            <div id="payoutDetails" class="payout-highlight-text" style="margin-top: 18px;">
+                💰 winning bets will appear here
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- Roulette Data ----------
+    // numbers 0, 1..36 with color mapping (classic european but with 00? the image had 00 but standard odds table shows 0. We'll keep 0 only, but we add 00 optional? Actually in layout image shows 00 top left. To match classic, we add 00 as green. Many casinos have 0 & 00, we support both for authenticity.
+    // we build both 0 and 00 if needed, but the odds table uses 0. Because the picture shows "00", we implement double zero for realism.
+    const NUMBERS_CONFIG = [
+        {num: "0", color: "green"}, {num: "00", color: "green"},
+        {num: "1", color: "red"}, {num: "2", color: "black"}, {num: "3", color: "red"}, {num: "4", color: "black"},
+        {num: "5", color: "red"}, {num: "6", color: "black"}, {num: "7", color: "red"}, {num: "8", color: "black"},
+        {num: "9", color: "red"}, {num: "10", color: "black"}, {num: "11", color: "black"}, {num: "12", color: "red"},
+        {num: "13", color: "black"}, {num: "14", color: "red"}, {num: "15", color: "black"}, {num: "16", color: "red"},
+        {num: "17", color: "black"}, {num: "18", color: "red"}, {num: "19", color: "red"}, {num: "20", color: "black"},
+        {num: "21", color: "red"}, {num: "22", color: "black"}, {num: "23", color: "red"}, {num: "24", color: "black"},
+        {num: "25", color: "red"}, {num: "26", color: "black"}, {num: "27", color: "red"}, {num: "28", color: "black"},
+        {num: "29", color: "black"}, {num: "30", color: "red"}, {num: "31", color: "black"}, {num: "32", color: "red"},
+        {num: "33", color: "black"}, {num: "34", color: "red"}, {num: "35", color: "black"}, {num: "36", color: "red"}
+    ];
+
+    // helper: get color class
+    function getColorClass(numStr) {
+        const item = NUMBERS_CONFIG.find(n => n.num === numStr);
+        if (!item) return "green";
+        if (item.color === "red") return "red";
+        if (item.color === "black") return "black";
+        return "green";
+    }
+
+    // winning spaces logic & payouts (based on classic roulette odds)
+    // returns array of {betName, payoutMultiplier, affectedSpacesDesc}
+    function computeWinningBets(numberStr) {
+        const num = numberStr === "00" ? 0 : parseInt(numberStr, 10);
+        const isZero = (numberStr === "0" || numberStr === "00");
+        const numVal = isZero ? 0 : num;
+        const numeric = numVal;
+        const color = getColorClass(numberStr);
+        const isRed = color === "red";
+        const isBlack = color === "black";
+        
+        const bets = [];
+
+        // 1) Straight up (always)
+        bets.push({ betName: `Straight ${numberStr}`, payout: 35, category: "straight", highlightNumbers: [numberStr] });
+
+        // Splits & specials omitted for simplicity? but we will highlight main categories that table needs:
+        // For better usability, we include Dozen, Column, Even chances, also Corner/Street not needed for highlight but we show payout text.
+        // But to be interactive, we will highlight all squares that win: including columns, dozens, even/odd, low/high, red/black.
+        // Additionally, we won't generate all possible split/street but we will show major outside and also highlight number itself.
+        
+        // Dozens
+        if (!isZero) {
+            if (numeric >= 1 && numeric <= 12) bets.push({ betName: "1st Dozen (1-12)", payout: 2, category: "dozen", dozen: "1st12" });
+            else if (numeric >= 13 && numeric <= 24) bets.push({ betName: "2nd Dozen (13-24)", payout: 2, category: "dozen", dozen: "2nd12" });
+            else if (numeric >= 25 && numeric <= 36) bets.push({ betName: "3rd Dozen (25-36)", payout: 2, category: "dozen", dozen: "3rd12" });
+            
+            // Columns mapping (actual numbers)
+            const col1 = [1,4,7,10,13,16,19,22,25,28,31,34];
+            const col2 = [2,5,8,11,14,17,20,23,26,29,32,35];
+            const col3 = [3,6,9,12,15,18,21,24,27,30,33,36];
+            if (col1.includes(numeric)) bets.push({ betName: "1st Column (2:1)", payout: 2, category: "column", col: "1stCol" });
+            if (col2.includes(numeric)) bets.push({ betName: "2nd Column (2:1)", payout: 2, category: "column", col: "2ndCol" });
+            if (col3.includes(numeric)) bets.push({ betName: "3rd Column (2:1)", payout: 2, category: "column", col: "3rdCol" });
+            
+            // Low / High
+            if (numeric >=1 && numeric <=18) bets.push({ betName: "1 to 18", payout: 1, category: "lowhigh", range: "1to18" });
+            if (numeric >=19 && numeric <=36) bets.push({ betName: "19 to 36", payout: 1, category: "lowhigh", range: "19to36" });
+            
+            // Odd/Even
+            if (numeric % 2 === 1) bets.push({ betName: "ODD", payout: 1, category: "parity", type: "ODD" });
+            else bets.push({ betName: "EVEN", payout: 1, category: "parity", type: "EVEN" });
+            
+            // Color
+            if (isRed) bets.push({ betName: "RED", payout: 1, category: "color", colorType: "RED" });
+            if (isBlack) bets.push({ betName: "BLACK", payout: 1, category: "color", colorType: "BLACK" });
+        } else {
+            // zero: only straight and basket? but for clarity: zero no dozen/color bets but we keep straight. Also basket exist but we skip for simpler highlights.
+            // Basket bet is optional but we show zero only.
+        }
+        
+        // Additional: For visual we also check basket? not needed for general outside.
+        return bets;
+    }
+
+    // highlight logic : clear previous highlights, then highlight number cell and outside tiles
+    let currentHighlightedNumber = null;
+    function highlightWinningCells(numberStr, winningBetsArray) {
+        // remove all highlight classes
+        document.querySelectorAll('.number-cell').forEach(cell => cell.classList.remove('highlight-win'));
+        document.querySelectorAll('.bet-tile').forEach(tile => tile.classList.remove('winning-outside'));
+        
+        // highlight the winning number cell
+        const targetCell = document.querySelector(`.number-cell[data-num="${numberStr}"]`);
+        if (targetCell) targetCell.classList.add('highlight-win');
+        
+        // highlight corresponding outside bets based on categories
+        for (let bet of winningBetsArray) {
+            if (bet.category === "dozen") {
+                const tile = document.querySelector(`.bet-tile[data-bet="${bet.dozen}"]`);
+                if (tile) tile.classList.add('winning-outside');
+            }
+            if (bet.category === "column") {
+                const tile = document.querySelector(`.bet-tile[data-bet="${bet.col}"]`);
+                if (tile) tile.classList.add('winning-outside');
+            }
+            if (bet.category === "lowhigh") {
+                const tile = document.querySelector(`.bet-tile[data-bet="${bet.range}"]`);
+                if (tile) tile.classList.add('winning-outside');
+            }
+            if (bet.category === "parity") {
+                const tile = document.querySelector(`.bet-tile[data-bet="${bet.type}"]`);
+                if (tile) tile.classList.add('winning-outside');
+            }
+            if (bet.category === "color") {
+                const tile = document.querySelector(`.bet-tile[data-bet="${bet.colorType}"]`);
+                if (tile) tile.classList.add('winning-outside');
+            }
+        }
+    }
+    
+    // update payout summary text
+    function updatePayoutDetails(winningBets) {
+        const container = document.getElementById("payoutDetails");
+        if (!winningBets.length) {
+            container.innerHTML = `💸 No winning outside bets for this number (only straight up).<br> Straight up pays 35:1`;
+            return;
+        }
+        let html = `<strong>🏆 WINNING BETS & PAYOUTS</strong><br>`;
+        winningBets.forEach(bet => {
+            html += `✔ ${bet.betName} → <strong style="color:#ffcc66;">${bet.payout}:1</strong><br>`;
+        });
+        html += `<span style="font-size:0.75rem;">*Straight up always pays 35:1</span>`;
+        container.innerHTML = html;
+    }
+    
+    // history management
+    let spinHistory = []; // store {number, timestamp}
+    
+    function addSpin(numberStr) {
+        const winningBets = computeWinningBets(numberStr);
+        spinHistory.unshift({ number: numberStr, time: new Date(), winningBets });
+        if (spinHistory.length > 25) spinHistory.pop();
+        renderHistory();
+        highlightWinningCells(numberStr, winningBets);
+        updatePayoutDetails(winningBets);
+        // update last win summary
+        const lastWinSpan = document.getElementById("lastWinSummary");
+        const payoutTotalMsg = winningBets.map(b=>`${b.betName}(${b.payout}:1)`).join(', ');
+        lastWinSpan.innerHTML = `🎯 last: ${numberStr} | ${payoutTotalMsg.substring(0, 70) || 'Straight 35:1'}`;
+    }
+    
+    function renderHistory() {
+        const historyDiv = document.getElementById("historyList");
+        if (!spinHistory.length) {
+            historyDiv.innerHTML = '<div style="text-align:center; opacity:0.7;">✨ click a number to start ✨</div>';
+            return;
+        }
+        historyDiv.innerHTML = spinHistory.map(entry => {
+            const colorClass = getColorClass(entry.number);
+            const bgColorMap = {red: "#b12a2a", black: "#2d2d2d", green: "#1f6d42"};
+            const bg = bgColorMap[colorClass] || "#2b5a3a";
+            return `
+                <div class="history-item" style="border-left-color: ${colorClass === 'red' ? '#e35' : colorClass === 'black' ? '#ccc' : '#ffbf69'}">
+                    <div class="color-dot" style="background: ${bg}; color: white;">${entry.number}</div>
+                    <div style="flex:1">${entry.number}</div>
+                    <div style="font-size:0.7rem; font-family: monospace;">${formatTime(entry.time)}</div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function formatTime(date) {
+        return `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}:${date.getSeconds().toString().padStart(2,'0')}`;
+    }
+    
+    // Build roulette grid (numbers layout in order: 0,00 then rows 1-36 in typical 3x12 style)
+    function buildRouletteGrid() {
+        const container = document.getElementById("rouletteNumbersGrid");
+        container.innerHTML = '';
+        // zero & double zero first
+        ["0","00"].forEach(z => {
+            const div = document.createElement("div");
+            div.className = `number-cell ${getColorClass(z)} zero-cell`;
+            div.innerText = z;
+            div.setAttribute("data-num", z);
+            div.addEventListener("click", () => onNumberClick(z));
+            container.appendChild(div);
+        });
+        // numbers 1 to 36
+        for (let i = 1; i <= 36; i++) {
+            const numStr = i.toString();
+            const div = document.createElement("div");
+            div.className = `number-cell ${getColorClass(numStr)}`;
+            div.innerText = numStr;
+            div.setAttribute("data-num", numStr);
+            div.addEventListener("click", () => onNumberClick(numStr));
+            container.appendChild(div);
+        }
+    }
+    
+    // populate mini number picker
+    function buildMiniPicker() {
+        const pickerDiv = document.getElementById("quickNumberPicker");
+        pickerDiv.innerHTML = '';
+        const allNumbers = ["0","00", ...Array.from({length:36}, (_,i)=> (i+1).toString())];
+        allNumbers.forEach(num => {
+            const span = document.createElement("div");
+            span.className = `mini-num ${getColorClass(num)}`;
+            span.innerText = num;
+            span.style.cursor = "pointer";
+            span.addEventListener("click", () => onNumberClick(num));
+            pickerDiv.appendChild(span);
+        });
+    }
+    
+    function onNumberClick(number) {
+        addSpin(number);
+    }
+    
+    // reset history
+    function resetHistory() {
+        spinHistory = [];
+        renderHistory();
+        document.getElementById("payoutDetails").innerHTML = "💰 winning bets will appear here";
+        document.getElementById("lastWinSummary").innerHTML = "✨ last win: —";
+        // remove highlights from table
+        document.querySelectorAll('.number-cell').forEach(cell => cell.classList.remove('highlight-win'));
+        document.querySelectorAll('.bet-tile').forEach(tile => tile.classList.remove('winning-outside'));
+    }
+    
+    // attach outside bet tiles mapping data attributes (for highlighting)
+    function initOutsideTilesAttrs() {
+        const tilesMap = [
+            {selector: "[data-bet='1st12']", key: "1st12"}, {selector: "[data-bet='2nd12']", key: "2nd12"}, {selector: "[data-bet='3rd12']", key: "3rd12"},
+            {selector: "[data-bet='1stCol']", key: "1stCol"}, {selector: "[data-bet='2ndCol']", key: "2ndCol"}, {selector: "[data-bet='3rdCol']", key: "3rdCol"},
+            {selector: "[data-bet='1to18']", key: "1to18"}, {selector: "[data-bet='19to36']", key: "19to36"},
+            {selector: "[data-bet='ODD']", key: "ODD"}, {selector: "[data-bet='EVEN']", key: "EVEN"},
+            {selector: "[data-bet='RED']", key: "RED"}, {selector: "[data-bet='BLACK']", key: "BLACK"}
+        ];
+        tilesMap.forEach(t => {
+            const el = document.querySelector(t.selector);
+            if (el && !el.getAttribute("data-bet")) el.setAttribute("data-bet", t.key);
+        });
+    }
+    
+    // optional demo initial dummy spin?
+    function seedDemoSpin() {
+        setTimeout(() => {
+            addSpin("14");
+        }, 100);
+    }
+    
+    // event binding
+    document.getElementById("resetHistoryBtn").addEventListener("click", resetHistory);
+    
+    buildRouletteGrid();
+    buildMiniPicker();
+    initOutsideTilesAttrs();
+    seedDemoSpin();
+</script>
+</body>
+</html>
