@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Roulette Tracker | Gentle Light Theme | Winning Payouts & Highlights</title>
+    <title>Roulette Tracker | Classic Table Layout | Eye-Friendly Design</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,8 +11,8 @@
         }
 
         body {
-            background: #f2efe6;  /* warm ivory-white, eye-friendly */
-            font-family: 'Segoe UI', 'Roboto', 'Inter', system-ui, -apple-system, sans-serif;
+            background: #d9cdb0;  /* soft khaki/warm beige - eye friendly, not white */
+            font-family: 'Segoe UI', 'Roboto', 'Inter', system-ui, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,16 +21,14 @@
             min-height: 100vh;
         }
 
-        /* main card with soft shadow */
-        .roulette-light {
-            max-width: 1400px;
+        /* main container - soft parchment feel */
+        .roulette-app {
+            max-width: 1360px;
             width: 100%;
-            background: #ffffff;
-            border-radius: 48px;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.02);
-            padding: 24px 28px;
-            transition: all 0.2s;
-            border: 1px solid #ece4d4;
+            background: #f5efdf;
+            border-radius: 28px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255,255,240,0.8);
+            padding: 20px 24px 24px 24px;
         }
 
         /* header */
@@ -39,212 +37,249 @@
             justify-content: space-between;
             align-items: baseline;
             flex-wrap: wrap;
-            margin-bottom: 18px;
-            border-bottom: 2px solid #e2d9cc;
-            padding-bottom: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #cfc2a8;
         }
 
         h1 {
-            font-size: 1.9rem;
+            font-size: 1.7rem;
             margin: 0;
-            font-weight: 650;
-            letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #3c6e47, #2b5a3a);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            color: #4a5b3c;
         }
 
         .subhead {
-            font-size: 0.8rem;
-            color: #6b5c48;
+            font-size: 0.75rem;
+            color: #7c6e54;
             margin-top: 4px;
         }
 
         .last-spin-badge {
-            background: #f6f1e6;
-            padding: 8px 20px;
-            border-radius: 80px;
+            background: #e8dfce;
+            padding: 6px 18px;
+            border-radius: 40px;
             font-family: 'SF Mono', monospace;
             font-weight: 600;
-            color: #2b5a3a;
-            font-size: 0.9rem;
-            box-shadow: inset 0 0 0 1px #e2d5c0, 0 2px 4px rgba(0,0,0,0.02);
+            color: #4a5b3c;
+            font-size: 0.85rem;
+            box-shadow: inset 0 0 0 1px #ddd0b8;
         }
 
-        /* 2 columns layout */
+        /* two column layout */
         .game-layout {
             display: flex;
             flex-wrap: wrap;
-            gap: 28px;
-            margin-top: 12px;
+            gap: 24px;
         }
 
-        /* TABLE SECTION — clean white/felt hybrid */
-        .table-original {
-            flex: 3.2;
-            min-width: 640px;
-            background: #fefaf2;
-            background: linear-gradient(145deg, #fffbf5, #fef7ed);
-            border-radius: 38px;
-            padding: 18px 20px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,240,0.8);
-            border: 1px solid #e9dfcf;
+        /* ---- CLASSIC ROULETTE TABLE (exactly like image reference) ---- */
+        .table-classic {
+            flex: 3;
+            min-width: 680px;
+            background: #f2ebdb;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: inset 0 0 0 1px #e9dfcd, 0 6px 14px rgba(0,0,0,0.05);
         }
 
-        /* numbers grid inspired by classic roulette but light */
+        /* main number grid - 0,00 then 3x12 layout */
         .numbers-grid {
             display: grid;
             grid-template-columns: repeat(13, 1fr);
-            gap: 6px;
-            background-color: #faf3e6;
-            padding: 14px 10px;
-            border-radius: 32px;
-            margin-bottom: 24px;
-            box-shadow: inset 0 0 0 1px #e3d5c2, 0 4px 12px rgba(0, 0, 0, 0.02);
+            gap: 5px;
+            background: #e8ddcc;
+            padding: 12px 10px;
+            border-radius: 18px;
+            margin-bottom: 16px;
         }
 
         .cell-number {
             text-align: center;
             font-weight: 700;
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             padding: 10px 4px;
-            border-radius: 48px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.08s linear;
             font-family: monospace;
-            letter-spacing: 0.5px;
-            background: #ffffffdd;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0 1px 0 white;
-            border: 1px solid #e9ddcd;
+            background: #fef7ec;
+            border: 1px solid #d6c9b4;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
 
         .cell-number:hover {
-            transform: scale(1.02);
-            background: #fff6ea;
-            border-color: #cbbd9f;
-        }
-
-        /* number colors - soft yet distinct */
-        .red { background: #ffe8e6; color: #b13b2d; border-color: #f3cfc7; font-weight: 800; }
-        .black { background: #f3f0ea; color: #2c2b26; border-color: #dad1c2; font-weight: 800; }
-        .green { background: #e2f3e8; color: #1f6d42; border-color: #cbdfcf; font-weight: 800; }
-
-        /* winning glow — elegant highlight */
-        .winning-highlight {
-            box-shadow: 0 0 0 3px #ffc107, 0 0 0 6px #ffdf99, inset 0 0 0 2px white;
-            background: #fff1cf;
+            background: #fff3e0;
             transform: scale(1.01);
-            z-index: 3;
-            position: relative;
-            border-color: #e0a800;
+            border-color: #b8a77e;
         }
 
-        /* outside bets panel — soft cards */
-        .outside-bets-panel {
+        /* number colors */
+        .red { background: #f8e2de; color: #bc4e3a; border-color: #e2c9c0; }
+        .black { background: #ece4d6; color: #3d3a2e; border-color: #d9cdb8; }
+        .green { background: #e0efe4; color: #2f6b47; border-color: #c7dbc8; }
+
+        /* winning highlight */
+        .winning-highlight {
+            box-shadow: 0 0 0 2px #e5b33c, 0 0 0 4px #ffdd99, inset 0 0 0 1px white;
+            background: #ffe8c7;
+            transform: scale(1.01);
+            z-index: 2;
+            position: relative;
+        }
+
+        /* ---- OUTSIDE BETS SECTION - like original image layout (dozens row, columns row, then lower row) ---- */
+        .outside-area {
+            margin-top: 12px;
+        }
+
+        /* dozens row (1st12, 2nd12, 3rd12) - exactly like image */
+        .dozens-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 18px 0 16px 0;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .dozen-tile {
+            background: #e3d7c2;
+            text-align: center;
+            padding: 8px 6px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #4d4430;
+            border: 1px solid #cfc0a4;
+            letter-spacing: 0.5px;
+        }
+        .dozen-tile span.payout {
+            font-size: 0.7rem;
+            background: #d2c2a4;
+            padding: 2px 8px;
+            border-radius: 30px;
+            margin-left: 8px;
         }
 
-        .bet-card {
-            background: #ffffffea;
-            padding: 10px 8px;
+        /* columns row + low/high row combined? Actually image has 1stCol, 2ndCol, 3rdCol on same row */
+        .columns-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .col-tile {
+            background: #e3d7c2;
             text-align: center;
-            border-radius: 56px;
+            padding: 8px 6px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #4d4430;
+            border: 1px solid #cfc0a4;
+        }
+        .col-tile span.payout {
+            font-size: 0.7rem;
+            background: #d2c2a4;
+            padding: 2px 8px;
+            border-radius: 30px;
+            margin-left: 6px;
+        }
+
+        /* bottom row: 1to18, EVEN, RED, BLACK, ODD, 19to36 — exactly six items in classic order */
+        .even-chances-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .even-tile {
+            background: #e3d7c2;
+            text-align: center;
+            padding: 8px 5px;
+            border-radius: 12px;
             font-weight: 600;
             font-size: 0.85rem;
-            color: #3e3a2e;
-            border: 1px solid #e0d3be;
-            transition: 0.07s linear;
-            backdrop-filter: blur(2px);
-            letter-spacing: 0.3px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            color: #4d4430;
+            border: 1px solid #cfc0a4;
         }
-
-        .bet-card.winning-highlight {
-            background: #feebc0;
-            border-color: #e6b422;
-            color: #3a2c12;
-            box-shadow: 0 0 0 2px #ffde9e, 0 0 0 5px #ffe1a3;
-            font-weight: 800;
-        }
-
-        .payout-odds {
+        .even-tile span.payout {
             font-size: 0.65rem;
-            background: #eae2d4;
-            border-radius: 40px;
-            padding: 3px 8px;
-            margin-left: 8px;
-            color: #5f4e34;
-            font-weight: 500;
+            background: #d2c2a4;
+            padding: 2px 6px;
+            border-radius: 30px;
+            margin-left: 6px;
+        }
+
+        /* highlight winning outside bets */
+        .winning-outside {
+            background: #f5daa0 !important;
+            border-color: #e0a936 !important;
+            box-shadow: 0 0 0 1px #f7c56e, 0 0 0 3px #ffdfa5;
+            font-weight: 800;
+            color: #3a2f1a;
         }
 
         /* current spin bar */
         .current-spin-bar {
-            background: #f5efe4;
-            border-radius: 80px;
-            margin-top: 18px;
-            padding: 12px 20px;
+            background: #e9dfcf;
+            border-radius: 60px;
+            margin-top: 20px;
+            padding: 10px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 14px;
-            border: 1px solid #e5dacb;
+            gap: 12px;
         }
 
         .number-quick-picker {
             display: flex;
             flex-wrap: wrap;
-            gap: 7px;
-            max-height: 105px;
+            gap: 6px;
+            max-height: 90px;
             overflow-y: auto;
-            padding: 5px 2px;
+            padding: 3px;
         }
 
         .mini-number {
-            width: 44px;
-            background: #ffffff;
+            width: 42px;
+            background: #fef4e6;
             text-align: center;
-            padding: 6px 0;
-            border-radius: 44px;
+            padding: 5px 0;
+            border-radius: 30px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.85rem;
-            border: 1px solid #dcd0bd;
-            transition: 0.05s;
-            color: #3b3a32;
+            font-size: 0.8rem;
+            border: 1px solid #cfc1a8;
         }
-        .mini-number.red { background: #ffece8; color: #b13b2d; }
-        .mini-number.black { background: #f1ede5; color: #2c2b26; }
-        .mini-number.green { background: #e0f0e6; color: #1f6d42; }
-        .mini-number:hover { transform: scale(0.96); background: #fef0df; }
+        .mini-number.red { background: #f9e4df; color: #bc4e3a; }
+        .mini-number.black { background: #f0e8dc; color: #4a4030; }
+        .mini-number.green { background: #e0efe4; color: #2f6b47; }
+        .mini-number:hover { background: #ffefdb; transform: scale(0.96); }
 
         button {
-            background: #e6ddcf;
+            background: #d9ccb2;
             border: none;
-            padding: 8px 24px;
-            border-radius: 80px;
+            padding: 6px 20px;
+            border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.85rem;
-            color: #4c3e28;
+            font-size: 0.8rem;
+            color: #4d412a;
             transition: 0.1s;
-            border: 1px solid #cfc1ab;
+            border: 1px solid #c2b294;
         }
-        button:active { transform: scale(0.97); background: #d9cdba; }
+        button:active { transform: scale(0.97); background: #cebfa0; }
 
-        /* HISTORY PANEL - light & airy */
+        /* history panel - matching soft tones */
         .history-panel {
             flex: 1.2;
             min-width: 260px;
-            background: #fffcf7;
-            border-radius: 38px;
-            padding: 20px;
-            border: 1px solid #ede3d3;
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.02);
+            background: #f5efdf;
+            border-radius: 24px;
+            padding: 18px;
+            border: 1px solid #e2d5c0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
 
         .history-scroll {
@@ -254,85 +289,91 @@
         }
 
         .history-item {
-            background: #fef9f2;
-            margin: 12px 0;
-            padding: 8px 14px;
-            border-radius: 80px;
+            background: #fcf7ed;
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 60px;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             font-weight: 500;
             border-left: 5px solid;
-            transition: 0.05s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            border: 1px solid #f0e5d8;
+            border: 1px solid #e6dbc9;
         }
 
         .color-circle {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.1rem;
-            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+            font-size: 1rem;
         }
 
         .win-detail-box {
-            background: #fbf6ed;
-            border-radius: 28px;
-            padding: 14px 18px;
-            margin-top: 24px;
-            font-size: 0.85rem;
-            color: #5a4c34;
-            border-left: 4px solid #dbb86b;
+            background: #ede3d2;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-top: 20px;
+            font-size: 0.82rem;
+            color: #4e4432;
+            border-left: 4px solid #c5aa74;
             line-height: 1.4;
         }
 
-        hr {
-            border-color: #e6dbc9;
-        }
-
         @media (max-width: 980px) {
-            .numbers-grid { gap: 4px; }
-            .cell-number { font-size: 0.9rem; padding: 7px 2px; }
-            .table-original { min-width: 100%; }
+            .numbers-grid { gap: 3px; }
+            .cell-number { font-size: 0.85rem; padding: 6px 2px; }
+            .table-classic { min-width: 100%; }
+            .even-chances-row { gap: 5px; }
+            .even-tile { font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
-<div class="roulette-light">
+<div class="roulette-app">
     <div class="casino-header">
         <div>
             <h1>🎲 ROULETTE TRACKER</h1>
-            <div class="subhead">gentle light theme • click any number to record spin • win highlights & payouts</div>
+            <div class="subhead">classic table layout • click any number • win highlights & payouts</div>
         </div>
-        <div class="last-spin-badge" id="lastSpinPreview">✨ ready | last win: —</div>
+        <div class="last-spin-badge" id="lastSpinPreview">✨ ready | last spin: —</div>
     </div>
 
     <div class="game-layout">
-        <!-- ORIGINAL ROULETTE TABLE LAYOUT (0,00 + 1-36 grid) -->
-        <div class="table-original">
+        <!-- CLASSIC TABLE EXACTLY LIKE REFERENCE IMAGE -->
+        <div class="table-classic">
+            <!-- NUMBERS GRID (0,00 then 1-36) -->
             <div class="numbers-grid" id="rouletteNumbersGrid"></div>
 
-            <!-- outside bets matching original odds -->
-            <div class="outside-bets-panel" id="outsideBetsContainer">
-                <div class="bet-card" data-bet-id="1st12">1st 12 (1-12)<span class="payout-odds">2:1</span></div>
-                <div class="bet-card" data-bet-id="2nd12">2nd 12 (13-24)<span class="payout-odds">2:1</span></div>
-                <div class="bet-card" data-bet-id="3rd12">3rd 12 (25-36)<span class="payout-odds">2:1</span></div>
-                <div class="bet-card" data-bet-id="1stCol">Column 1<span class="payout-odds">2:1</span></div>
-                <div class="bet-card" data-bet-id="2ndCol">Column 2<span class="payout-odds">2:1</span></div>
-                <div class="bet-card" data-bet-id="3rdCol">Column 3<span class="payout-odds">2:1</span></div>
-                <div class="bet-card" data-bet-id="1to18">1 to 18<span class="payout-odds">1:1</span></div>
-                <div class="bet-card" data-bet-id="19to36">19 to 36<span class="payout-odds">1:1</span></div>
-                <div class="bet-card" data-bet-id="ODD">ODD<span class="payout-odds">1:1</span></div>
-                <div class="bet-card" data-bet-id="EVEN">EVEN<span class="payout-odds">1:1</span></div>
-                <div class="bet-card" data-bet-id="RED">RED<span class="payout-odds">1:1</span></div>
-                <div class="bet-card" data-bet-id="BLACK">BLACK<span class="payout-odds">1:1</span></div>
+            <!-- OUTSIDE BETS IN TRADITIONAL FORMAT (as shown in image) -->
+            <div class="outside-area">
+                <!-- Dozens row: 1st 12, 2nd 12, 3rd 12 -->
+                <div class="dozens-row">
+                    <div class="dozen-tile" data-bet-id="1st12">1st 12 <span class="payout">2:1</span></div>
+                    <div class="dozen-tile" data-bet-id="2nd12">2nd 12 <span class="payout">2:1</span></div>
+                    <div class="dozen-tile" data-bet-id="3rd12">3rd 12 <span class="payout">2:1</span></div>
+                </div>
+                <!-- Columns row (1st Col, 2nd Col, 3rd Col) -->
+                <div class="columns-row">
+                    <div class="col-tile" data-bet-id="1stCol">1st Column <span class="payout">2:1</span></div>
+                    <div class="col-tile" data-bet-id="2ndCol">2nd Column <span class="payout">2:1</span></div>
+                    <div class="col-tile" data-bet-id="3rdCol">3rd Column <span class="payout">2:1</span></div>
+                </div>
+                <!-- Bottom row: 1 to 18 | EVEN | RED | BLACK | ODD | 19 to 36 -->
+                <div class="even-chances-row">
+                    <div class="even-tile" data-bet-id="1to18">1 to 18 <span class="payout">1:1</span></div>
+                    <div class="even-tile" data-bet-id="EVEN">EVEN <span class="payout">1:1</span></div>
+                    <div class="even-tile" data-bet-id="RED">RED <span class="payout">1:1</span></div>
+                    <div class="even-tile" data-bet-id="BLACK">BLACK <span class="payout">1:1</span></div>
+                    <div class="even-tile" data-bet-id="ODD">ODD <span class="payout">1:1</span></div>
+                    <div class="even-tile" data-bet-id="19to36">19 to 36 <span class="payout">1:1</span></div>
+                </div>
             </div>
 
+            <!-- quick spin selector & clear -->
             <div class="current-spin-bar">
                 <span style="font-weight: 600;">🎯 SELECT WINNING NUMBER:</span>
                 <div class="number-quick-picker" id="quickSpinPicker"></div>
@@ -340,22 +381,22 @@
             </div>
         </div>
 
-        <!-- RIGHT HISTORY PANEL -->
+        <!-- HISTORY PANEL -->
         <div class="history-panel">
-            <div style="font-size: 1.25rem; font-weight: 650; border-left: 4px solid #bfa26b; padding-left: 12px; margin-bottom: 12px;">📋 SPIN HISTORY</div>
+            <div style="font-size: 1.2rem; font-weight: 650; border-left: 4px solid #b9995c; padding-left: 12px; margin-bottom: 14px;">📋 SPIN HISTORY</div>
             <div class="history-scroll" id="historyListContainer">
                 <div style="text-align: center; opacity: 0.6; padding: 30px;">— no spins yet —</div>
             </div>
             <div class="win-detail-box" id="payoutDetailsPanel">
-                💰 <strong>winning odds</strong> will appear here after each spin
+                💰 <strong>winning odds</strong><br> will appear after each spin
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // ======================== ROULETTE DATA (0,00 + 1-36) ========================
-    const NUMBERS_FULL = [
+    // ---------- ROULETTE DATA (0,00 and 1-36 with correct colors) ----------
+    const ROULETTE_NUMBERS = [
         { num: "0", color: "green" }, { num: "00", color: "green" },
         { num: "1", color: "red" }, { num: "2", color: "black" }, { num: "3", color: "red" }, { num: "4", color: "black" },
         { num: "5", color: "red" }, { num: "6", color: "black" }, { num: "7", color: "red" }, { num: "8", color: "black" },
@@ -368,184 +409,166 @@
         { num: "33", color: "black" }, { num: "34", color: "red" }, { num: "35", color: "black" }, { num: "36", color: "red" }
     ];
 
-    function getColorStyle(numStr) {
-        const entry = NUMBERS_FULL.find(n => n.num === numStr);
+    function getNumberColor(numStr) {
+        const entry = ROULETTE_NUMBERS.find(n => n.num === numStr);
         return entry ? entry.color : "green";
     }
 
-    // compute all winning outside bets (dozen, column, 1-18/19-36, odd/even, red/black)
-    function computeWinningBets(numberStr) {
-        if (numberStr === "0" || numberStr === "00") return [];   // zero/00 have no outside bets
-        
+    // compute winning outside bets based on number (zero/00 have none)
+    function getWinningBets(numberStr) {
+        if (numberStr === "0" || numberStr === "00") return [];
         const num = parseInt(numberStr, 10);
-        const color = getColorStyle(numberStr);
+        const color = getNumberColor(numberStr);
         const isRed = (color === "red");
         const isBlack = (color === "black");
         const bets = [];
-        
-        // Dozens
-        if (num >= 1 && num <= 12) bets.push({ id: "1st12", name: "1st Dozen (1-12)", payout: 2 });
-        else if (num >= 13 && num <= 24) bets.push({ id: "2nd12", name: "2nd Dozen (13-24)", payout: 2 });
-        else if (num >= 25 && num <= 36) bets.push({ id: "3rd12", name: "3rd Dozen (25-36)", payout: 2 });
-        
-        // Columns (classic mapping)
+
+        // dozens
+        if (num >= 1 && num <= 12) bets.push({ id: "1st12", name: "1st 12 (1-12)", payout: 2 });
+        else if (num >= 13 && num <= 24) bets.push({ id: "2nd12", name: "2nd 12 (13-24)", payout: 2 });
+        else if (num >= 25 && num <= 36) bets.push({ id: "3rd12", name: "3rd 12 (25-36)", payout: 2 });
+
+        // columns
         const col1 = [1,4,7,10,13,16,19,22,25,28,31,34];
         const col2 = [2,5,8,11,14,17,20,23,26,29,32,35];
         const col3 = [3,6,9,12,15,18,21,24,27,30,33,36];
-        if (col1.includes(num)) bets.push({ id: "1stCol", name: "Column 1", payout: 2 });
-        if (col2.includes(num)) bets.push({ id: "2ndCol", name: "Column 2", payout: 2 });
-        if (col3.includes(num)) bets.push({ id: "3rdCol", name: "Column 3", payout: 2 });
-        
-        // Low / High
+        if (col1.includes(num)) bets.push({ id: "1stCol", name: "1st Column", payout: 2 });
+        if (col2.includes(num)) bets.push({ id: "2ndCol", name: "2nd Column", payout: 2 });
+        if (col3.includes(num)) bets.push({ id: "3rdCol", name: "3rd Column", payout: 2 });
+
+        // low/high
         if (num >= 1 && num <= 18) bets.push({ id: "1to18", name: "1 to 18", payout: 1 });
         if (num >= 19 && num <= 36) bets.push({ id: "19to36", name: "19 to 36", payout: 1 });
-        
-        // Odd / Even
+
+        // odd/even
         if (num % 2 === 1) bets.push({ id: "ODD", name: "ODD", payout: 1 });
         else bets.push({ id: "EVEN", name: "EVEN", payout: 1 });
-        
-        // Red / Black
+
+        // red/black
         if (isRed) bets.push({ id: "RED", name: "RED", payout: 1 });
         if (isBlack) bets.push({ id: "BLACK", name: "BLACK", payout: 1 });
-        
+
         return bets;
     }
-    
-    // highlight number cell + all winning outside bet tiles
-    function highlightWinningCells(numberStr, winningBets) {
-        // remove all existing highlights
+
+    // highlight winning cells & outside bets
+    function highlightWinning(numberStr, winningBets) {
         document.querySelectorAll('.cell-number').forEach(el => el.classList.remove('winning-highlight'));
-        document.querySelectorAll('.bet-card').forEach(el => el.classList.remove('winning-highlight'));
-        
-        // highlight the landed number
-        const targetCell = document.querySelector(`.cell-number[data-value="${numberStr}"]`);
-        if (targetCell) targetCell.classList.add('winning-highlight');
-        
-        // highlight each winning outside bet
+        document.querySelectorAll('.dozen-tile, .col-tile, .even-tile').forEach(el => el.classList.remove('winning-outside'));
+
+        const target = document.querySelector(`.cell-number[data-value="${numberStr}"]`);
+        if (target) target.classList.add('winning-highlight');
+
         winningBets.forEach(bet => {
-            const tile = document.querySelector(`.bet-card[data-bet-id="${bet.id}"]`);
-            if (tile) tile.classList.add('winning-highlight');
+            const tile = document.querySelector(`[data-bet-id="${bet.id}"]`);
+            if (tile) tile.classList.add('winning-outside');
         });
     }
-    
-    // update payout details panel with elegant formatting
-    function updatePayoutDetails(numberStr, winningBets) {
+
+    function updatePayoutPanel(numberStr, winningBets) {
         const container = document.getElementById("payoutDetailsPanel");
-        const straightPayout = "35:1";
-        
         if (winningBets.length === 0 && (numberStr === "0" || numberStr === "00")) {
-            container.innerHTML = `<strong>🎰 ${numberStr} (Green)</strong><br>✔ Straight up → <strong>${straightPayout}</strong><br>✖ No additional outside bets.`;
+            container.innerHTML = `<strong>🎰 ${numberStr} (Green)</strong><br>✔ Straight up → <strong>35:1</strong><br>✖ No outside bets.`;
             return;
         }
-        let html = `<strong>🏆 WINNING PAYOUTS — ${numberStr}</strong><br>⭐ <strong>Straight up</strong> → ${straightPayout}<br>`;
+        let html = `<strong>🏆 PAYOUTS — ${numberStr}</strong><br>⭐ Straight up → 35:1<br>`;
         if (winningBets.length) {
             winningBets.forEach(b => {
                 html += `🎲 ${b.name} → <strong style="color:#b57c1c;">${b.payout}:1</strong><br>`;
             });
         } else {
-            html += `✖ No outside bets apply.`;
+            html += `✖ No additional winning bets.`;
         }
-        html += `<div style="font-size:0.7rem; margin-top: 8px;">✅ highlighted winning areas on table</div>`;
+        html += `<div style="font-size:0.7rem; margin-top:6px;">✅ highlighted winning areas</div>`;
         container.innerHTML = html;
     }
-    
+
     // ---------- SPIN HISTORY ----------
-    let spinHistory = [];   // each: { number, timestamp, winningBets }
-    
+    let spinHistory = [];
+
     function addSpin(numberStr) {
-        const winningBets = computeWinningBets(numberStr);
-        const spinRecord = {
+        const winningBets = getWinningBets(numberStr);
+        spinHistory.unshift({
             number: numberStr,
             timestamp: new Date(),
-            winningBets: winningBets,
-        };
-        spinHistory.unshift(spinRecord);
-        if (spinHistory.length > 28) spinHistory.pop();
-        
-        // update UI
-        renderHistoryPanel();
-        highlightWinningCells(numberStr, winningBets);
-        updatePayoutDetails(numberStr, winningBets);
-        
-        // update last spin badge
+            winningBets: winningBets
+        });
+        if (spinHistory.length > 30) spinHistory.pop();
+
+        renderHistory();
+        highlightWinning(numberStr, winningBets);
+        updatePayoutPanel(numberStr, winningBets);
+
         const previewSpan = document.getElementById("lastSpinPreview");
         let summary = `${numberStr} | `;
         if (winningBets.length) summary += `${winningBets[0].name} (${winningBets[0].payout}:1)`;
         else summary += `Straight 35:1`;
         previewSpan.innerHTML = `🎯 last spin: ${summary}`;
     }
-    
-    function renderHistoryPanel() {
+
+    function renderHistory() {
         const historyDiv = document.getElementById("historyListContainer");
         if (!spinHistory.length) {
             historyDiv.innerHTML = '<div style="text-align:center; opacity:0.6; padding:30px;">✨ click a number to start ✨</div>';
             return;
         }
         historyDiv.innerHTML = spinHistory.map(entry => {
-            const bgColor = getColorStyle(entry.number);
-            let circleBg = "";
-            if (bgColor === "red") circleBg = "#ffdfdb";
-            else if (bgColor === "black") circleBg = "#e9e2d8";
-            else circleBg = "#ddeee2";
-            const textColor = bgColor === "red" ? "#bc4e3a" : (bgColor === "black" ? "#443f36" : "#2b7346");
+            const bgColor = getNumberColor(entry.number);
+            let circleBg = bgColor === "red" ? "#f5dbd6" : (bgColor === "black" ? "#e3dacf" : "#dfede2");
+            let textColor = bgColor === "red" ? "#bc4e3a" : (bgColor === "black" ? "#4a4236" : "#2f6b47");
             return `
                 <div class="history-item" style="border-left-color: ${bgColor === 'red' ? '#dd8a78' : (bgColor === 'black' ? '#b6a68b' : '#8bc3a3')}">
-                    <div class="color-circle" style="background: ${circleBg}; color: ${textColor}; font-weight:800;">${entry.number}</div>
-                    <div style="flex:1; font-weight:500;">${entry.number}<span style="font-size:0.65rem; display:block; color:#968c78;">${formatTime(entry.timestamp)}</span></div>
-                    <div style="font-size:0.7rem; background:#e8e0d4; padding:3px 10px; border-radius:40px; font-weight:600;">${entry.winningBets.length ? `${entry.winningBets[0].payout}:1` : '35:1'}</div>
+                    <div class="color-circle" style="background: ${circleBg}; color: ${textColor};">${entry.number}</div>
+                    <div style="flex:1;">${entry.number}<span style="font-size:0.65rem; display:block; color:#968c78;">${formatTime(entry.timestamp)}</span></div>
+                    <div style="font-size:0.7rem; background:#e2d6c2; padding:2px 10px; border-radius:30px;">${entry.winningBets.length ? `${entry.winningBets[0].payout}:1` : '35:1'}</div>
                 </div>
             `;
         }).join('');
     }
-    
+
     function formatTime(date) {
         return `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}:${date.getSeconds().toString().padStart(2,'0')}`;
     }
-    
+
     function clearHistory() {
         spinHistory = [];
-        renderHistoryPanel();
-        document.getElementById("payoutDetailsPanel").innerHTML = "💰 <strong>winning odds</strong> will appear here after each spin";
-        document.getElementById("lastSpinPreview").innerHTML = "✨ ready | last win: —";
-        // remove all highlights
+        renderHistory();
+        document.getElementById("payoutDetailsPanel").innerHTML = "💰 <strong>winning odds</strong><br> will appear after each spin";
+        document.getElementById("lastSpinPreview").innerHTML = "✨ ready | last spin: —";
         document.querySelectorAll('.cell-number').forEach(el => el.classList.remove('winning-highlight'));
-        document.querySelectorAll('.bet-card').forEach(el => el.classList.remove('winning-highlight'));
+        document.querySelectorAll('.dozen-tile, .col-tile, .even-tile').forEach(el => el.classList.remove('winning-outside'));
     }
-    
-    // ----- BUILD ORIGINAL LAYOUT (0 & 00 first, then 1-36 in natural order)
-    function buildOriginalTableGrid() {
+
+    // ----- BUILD TABLE (0,00 first then 1-36) -----
+    function buildRouletteGrid() {
         const container = document.getElementById("rouletteNumbersGrid");
         container.innerHTML = '';
-        // double zero and zero
         ["0", "00"].forEach(z => {
             const cell = document.createElement("div");
-            cell.className = `cell-number ${getColorStyle(z)}`;
+            cell.className = `cell-number ${getNumberColor(z)}`;
             cell.innerText = z;
             cell.setAttribute("data-value", z);
             cell.addEventListener("click", () => addSpin(z));
             container.appendChild(cell);
         });
-        // numbers 1 to 36
         for (let i = 1; i <= 36; i++) {
             const numStr = i.toString();
             const cell = document.createElement("div");
-            cell.className = `cell-number ${getColorStyle(numStr)}`;
+            cell.className = `cell-number ${getNumberColor(numStr)}`;
             cell.innerText = numStr;
             cell.setAttribute("data-value", numStr);
             cell.addEventListener("click", () => addSpin(numStr));
             container.appendChild(cell);
         }
     }
-    
-    // quick number picker
+
     function buildQuickPicker() {
         const pickerDiv = document.getElementById("quickSpinPicker");
         pickerDiv.innerHTML = '';
         const allNums = ["0", "00", ...Array.from({ length: 36 }, (_, i) => (i + 1).toString())];
         allNums.forEach(num => {
             const chip = document.createElement("div");
-            const colorClass = getColorStyle(num);
-            chip.className = `mini-number ${colorClass}`;
+            chip.className = `mini-number ${getNumberColor(num)}`;
             chip.innerText = num;
             chip.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -554,20 +577,17 @@
             pickerDiv.appendChild(chip);
         });
     }
-    
-    // ensure data-bet-id already set on outside tiles (they are present)
-    function seedDemoSpin() {
-        setTimeout(() => {
-            addSpin("17");
-        }, 180);
+
+    // demo spin to show layout
+    function demoSpin() {
+        setTimeout(() => addSpin("21"), 150);
     }
-    
-    // event listener for clear button
+
     document.getElementById("clearAllBtn").addEventListener("click", clearHistory);
-    
-    buildOriginalTableGrid();
+
+    buildRouletteGrid();
     buildQuickPicker();
-    seedDemoSpin();
+    demoSpin();
 </script>
 </body>
 </html>
